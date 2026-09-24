@@ -1,30 +1,37 @@
-/* טוקנים של התבנית. Claude Code משתמש בהם, לא ממציא צבעים חדשים.
-   ניגודיות: כל טקסט על --paper ו---card עומד ב-4.5:1, גבולות ב-3:1. */
+/* ערכת ה-UX של התבנית. המבנה קבוע, הצבע נגזר מצבע מותג אחד.
+   Claude Code משתמש בטוקנים האלה, לא ממציא צבעים ולא כותב hex בקומפוננטות. */
 :root {
-  /* משטחים */
-  --paper: #f5f6fa;          /* רקע העמוד */
-  --card: #ffffff;           /* משטח מורם */
-  --surface-2: #eceef4;      /* משטח שקוע: שלד, שורה מודגשת */
-  --line: #d9dbe4;           /* גבול רגיל */
-  --line-strong: #82879b;    /* גבול חזק, 3.6:1 על לבן, 3.3:1 על הרקע */
+  /* ---------- קלט אחד: צבע המותג. מגיע מ-tool.config.ts דרך layout.tsx ---------- */
+  --brand: #2456C8;
 
-  /* טקסט */
-  --ink: #1b1d26;            /* ראשי */
-  --ink-2: #4a4e5c;          /* משני */
-  --ink-3: #6b7080;          /* שלישי, 4.6:1 על לבן */
-  --ink-disabled: #a9adbd;
+  /* ---------- נגזר מהמותג. לא עורכים. ----------
+     oklch(from ...) גוזר גוונים מאותו צבע בבהירות קבועה, כך שהניגודיות
+     נשמרת לכל צבע מותג: l=0.42 על לבן נותן 7:1 ומעלה, l=0.62 נותן 3:1 ומעלה. */
+  --accent: var(--brand);                                        /* מילוי כפתור ראשי */
+  --accent-hover: oklch(from var(--brand) calc(l - 0.07) c h);
+  --accent-ink: oklch(from var(--brand) 0.42 min(c, 0.17) h);   /* טקסט צבעוני על לבן */
+  --accent-soft: oklch(from var(--brand) 0.95 0.03 h);           /* רקע מודגש עדין */
+  /* טקסט על המבטא: לבן אם המותג כהה, כמעט שחור אם בהיר. הטריק: הבהירות
+     מוכפלת ונחתכת ל-0 או 1 לפי סף 0.7 */
+  --on-accent: oklch(from var(--brand) clamp(0, (0.7 - l) * 100, 1) 0 0);
 
-  /* מבטא */
-  --accent: #ff1f8e;         /* צבע מותג נעול. טקסט לבן עליו 3.6:1, מספיק לכפתור בגופן 600. לטקסט קטן: accent-ink */
-  --accent-ink: #c4006a;     /* טקסט ורוד קטן על לבן, 4.9:1 */
-  --accent-soft: #ffe3f1;
+  /* ניטרלים מוטים קלות לגוון המותג. אף פעם לא אפור טהור. */
+  --paper: oklch(from var(--brand) 0.975 0.006 h);     /* רקע העמוד */
+  --card: #ffffff;                                     /* משטח מורם */
+  --surface-2: oklch(from var(--brand) 0.94 0.01 h);   /* משטח שקוע: שלד, שורה מודגשת */
+  --line: oklch(from var(--brand) 0.88 0.012 h);       /* גבול רגיל */
+  --line-strong: oklch(from var(--brand) 0.62 0.02 h); /* גבול חזק, 3:1 ומעלה */
+  --ink: oklch(from var(--brand) 0.22 0.02 h);         /* טקסט ראשי */
+  --ink-2: oklch(from var(--brand) 0.42 0.02 h);       /* טקסט משני */
+  --ink-3: oklch(from var(--brand) 0.52 0.02 h);       /* טקסט שלישי, 4.5:1 ומעלה */
+  --ink-disabled: oklch(from var(--brand) 0.7 0.015 h);
 
-  /* סטטוס: תמיד עם מילה, אף פעם לא צבע לבד */
+  /* ---------- סטטוס: קבוע, סמנטי, לא תלוי במותג. תמיד עם מילה. ---------- */
   --ok: #1a7a50;  --ok-bg: #e3f5ec;
   --warn: #8a5200; --warn-bg: #fff1dc;
   --bad: #b8102a;  --bad-bg: #fde3e7;
 
-  /* מידות */
+  /* ---------- מידות: קבועות. זה מה שגורם לכלי לעבוד. ---------- */
   --radius-sm: 6px;          /* כפתור, שדה */
   --radius: 8px;             /* כרטיס */
   --radius-lg: 12px;         /* דיאלוג */
@@ -32,13 +39,21 @@
   --row: 48px;               /* גובה שורת טבלה */
   --gap-1: 8px; --gap-2: 12px; --gap-3: 16px; --gap-4: 24px; --gap-5: 32px;
 
-  /* תנועה */
   --fast: 150ms;
   --base: 200ms;
   --ease: cubic-bezier(0.2, 0, 0, 1);
 
   --font: "Heebo", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+/* דפדפן ישן בלי צבע יחסי: ערכה ניטרלית קבועה שעומדת בניגודיות */
+@supports not (color: oklch(from red l c h)) {
+  :root {
+    --accent: #2456C8; --accent-hover: #1c47a6; --accent-ink: #1a3f94; --accent-soft: #e8eefc; --on-accent: #ffffff;
+    --paper: #f5f6fa; --surface-2: #eceef4; --line: #d9dbe4; --line-strong: #82879b;
+    --ink: #1b1d26; --ink-2: #4a4e5c; --ink-3: #6b7080; --ink-disabled: #a9adbd;
+  }
 }
 
 * { box-sizing: border-box; }
@@ -111,14 +126,14 @@ button, input, select, textarea { font: inherit; color: inherit; }
   min-height: var(--control);
   padding-inline: 18px;
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   font-weight: 600;
   cursor: pointer;
   transition: background var(--fast) var(--ease), opacity var(--fast) var(--ease);
 }
-.btn:hover { background: #e8127c; }
+.btn:hover { background: var(--accent-hover); }
 .btn.secondary { background: var(--card); color: var(--ink); border-color: var(--line-strong); }
 .btn.secondary:hover { background: var(--surface-2); }
 .btn:disabled { opacity: 0.38; cursor: not-allowed; }
@@ -160,7 +175,7 @@ td.key { font-weight: 600; }
 .empty { text-align: center; padding: 40px 20px; color: var(--ink-2); display: grid; gap: var(--gap-2); justify-items: center; }
 .skeleton { background: linear-gradient(90deg, var(--surface-2) 25%, var(--line) 50%, var(--surface-2) 75%); background-size: 200% 100%; animation: shimmer 1.2s linear infinite; border-radius: var(--radius-sm); min-height: 1em; }
 @keyframes shimmer { to { background-position: -200% 0; } }
-.toast { position: fixed; inset-block-end: calc(16px + env(safe-area-inset-bottom, 0px)); inset-inline-start: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 10px 16px; border-radius: var(--radius); font-size: 0.95rem; z-index: 500; }
+.toast { position: fixed; inset-block-end: calc(16px + env(safe-area-inset-bottom, 0px)); inset-inline-start: 50%; transform: translateX(-50%); background: var(--ink); color: var(--card); padding: 10px 16px; border-radius: var(--radius); font-size: 0.95rem; z-index: 500; }
 
 /* אייקון כיווני: מתהפך ב-RTL. מספרים ושעונים לא. */
 [dir="rtl"] .icon-directional { transform: scaleX(-1); }

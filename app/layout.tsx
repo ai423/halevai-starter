@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type { Metadata, Viewport } from "next";
 import { toolConfig } from "@/tool.config";
 import "./globals.css";
@@ -13,9 +14,12 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
+// צבע המותג נכנס כמשתנה CSS אחד. globals.css גוזר ממנו את כל השאר.
+const brand = { "--brand": toolConfig.brandColor } as CSSProperties;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="he" dir="rtl">
+    <html lang="he" dir="rtl" style={brand}>
       <body>{children}</body>
     </html>
   );
