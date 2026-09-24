@@ -47,6 +47,7 @@
 | `docs/RULES.md` | עשרת הכללים לעבודה עם Claude Code | אתם, כשנתקעים |
 | `docs/SPEC-CARD-PRINT.md` | כרטיס האפיון בגרסה להדפסה | לי, לפני הסדנה |
 | `CLAUDE.md` | ההוראות ש-Claude Code קורא לפני כל עבודה בריפו | אף אחד. זה מה ששומר עליכם |
+| `docs/UX-UI.md` | כללי הממשק: פריסה, טפסים, טבלאות, מצבים, RTL. Claude Code קורא לפני כל מסך | אף אחד. זה מה שהופך את הכלי למקצועי |
 | `tool.config.ts` | השם שלכם ושם הכלי | אתם, פעם אחת |
 | `app/page.tsx` | דף הבית. הכלי שלכם ייבנה כאן | Claude Code |
 | `app/globals.css` | הצבעים והמראה. Claude Code משתמש בהם | Claude Code |
